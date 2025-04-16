@@ -61,7 +61,7 @@ int Application::run()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        sandbox.render();
+        sandbox.draw();
         sandbox.handleGui();
 
         ImGui::Render();

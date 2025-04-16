@@ -1,13 +1,20 @@
 #pragma once
 #include <string>
-#include <glad/glad.h>
+#include <glm/glm.hpp>
 
 class Shader
 {
-public :
-	Shader(std::string vertex, std::string fragment);
-	void bind();
-	int id;
-private :
+public:
+	Shader() = default;
+	Shader(const char* vertexPath, const char* fragmentPath);
 
+	void setMat4x4(const char* name, const glm::mat4x4& matrix);
+	void setVec3(const char* name, const glm::vec3& vec);
+	void setFloat(const char* name, float value);
+	void setBool(const char* name, bool value);
+	std::uint32_t id;
+
+private:
+	bool checkCompileStatus(std::uint32_t objectID, std::string name);
+	std::pair<std::string, bool> loadShader(const char* shaderPath);
 };
