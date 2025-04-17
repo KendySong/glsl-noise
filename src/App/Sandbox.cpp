@@ -6,6 +6,7 @@
 
 #include "Sandbox.hpp"
 #include "../Settings.hpp"
+#include <iostream>
 
 Sandbox::Sandbox()
 {
@@ -18,12 +19,18 @@ Sandbox::Sandbox()
     m_persistence = 0.5;
     m_lacunarity = 2.0;
 
-    //Instance default shader and configure it
-    m_main = Shader("../shaders/vert.glsl", "../shaders/frag.glsl");
-    glUseProgram(m_main.id);
-    glm::vec2 resolution(Settings::fbSize.x, Settings::fbSize.y);
-    m_main.setVec2("uResolution", resolution);
+    m_pause = false;
+    m_elapsedTime = 0;
+    m_current = ShaderType::Gradient;
 
+    //Instance default shader and configure it
+    m_shaders["Gradient"] = Shader("../shaders/vertex.glsl", "../shaders/gradient.glsl");
+    m_shaders["Turbulence"] = Shader("../shaders/vertex.glsl", "../shaders/turbulence.glsl");
+
+    glUseProgram(m_shaders[getString(m_current)].id);
+    m_resolution = glm::vec2(Settings::fbSize.x, Settings::fbSize.y);
+    m_pos = glm::vec2(0);
+    
     //Create framebuffer
     glGenFramebuffers(1, &m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
@@ -48,15 +55,20 @@ void Sandbox::update()
 {
     this->countFPS();
     float dt = m_delta.getDeltaTime();
-    m_main.setFloat("uTime", m_elapsed.getElapsedTime());
-    m_main.setVec3("uPos", m_planeShader.position);
-
-    m_main.setInt("uOctaves", m_octaves);
-    m_main.setVec2("uSize", m_size);
-    m_main.setFloat("uAmplitude", m_amplitude);
-    m_main.setFloat("uFrequency", m_frequency);
-    m_main.setFloat("uLacunarity", m_lacunarity);
-    m_main.setFloat("uPersistence", m_persistence);
+    if (!m_pause)
+    {
+        m_elapsedTime = m_elapsed.getElapsedTime();
+    }
+    
+    m_shaders[getString(m_current)].setVec2("uResolution", m_resolution);
+    m_shaders[getString(m_current)].setFloat("uTime", m_elapsedTime);
+    m_shaders[getString(m_current)].setVec2("uPos", m_pos);
+    m_shaders[getString(m_current)].setInt("uOctaves", m_octaves);
+    m_shaders[getString(m_current)].setVec2("uSize", m_size);
+    m_shaders[getString(m_current)].setFloat("uAmplitude", m_amplitude);
+    m_shaders[getString(m_current)].setFloat("uFrequency", m_frequency);
+    m_shaders[getString(m_current)].setFloat("uLacunarity", m_lacunarity);
+    m_shaders[getString(m_current)].setFloat("uPersistence", m_persistence);
 }
 
 void Sandbox::handleGui()
@@ -68,18 +80,38 @@ void Sandbox::handleGui()
 
     ImGui::DockSpaceOverViewport();
     ImGui::Begin("Shader");
-        ImGui::SetNextItemWidth(200);
-        ImGui::DragFloat2("Map Size", &m_size.x, 0.5);
-        ImGui::SetNextItemWidth(200);
-        ImGui::DragInt("Octaves", &m_octaves, 1.0, 1);
-        ImGui::SetNextItemWidth(200);
-        ImGui::DragFloat("Amplitude", &m_amplitude, 0.05);
-        ImGui::SetNextItemWidth(200);
-        ImGui::DragFloat("Frequency", &m_frequency, 0.05);
-        ImGui::SetNextItemWidth(200);
-        ImGui::DragFloat("Lacunarity", &m_lacunarity, 0.05);
-        ImGui::SetNextItemWidth(200);
-        ImGui::DragFloat("Persistence", &m_persistence, 0.05);
+        ImGui::PushItemWidth(200);
+        if (ImGui::BeginCombo("Shader type", getString(m_current).c_str()))
+        {
+            for (size_t i = 0; i < static_cast<int>(ShaderType::Count); i++)
+            {
+                bool selected = static_cast<int>(m_current) == i;
+                ShaderType shaderType = static_cast<ShaderType>(i);
+                if (ImGui::Selectable(getString(shaderType).c_str(), selected))
+                {
+                    m_current = shaderType;     
+                    glUseProgram(m_shaders[getString(m_current)].id);
+                }
+
+                if (selected)
+                {                  
+                    ImGui::SetItemDefaultFocus();
+                }
+            }
+            ImGui::EndCombo();
+        }
+        
+        ImGui::DragFloat2("Map Size", &m_size.x, 0.05);
+        ImGui::DragFloat2("Offset", &m_pos.x, 0.001);
+        ImGui::DragFloat("Time", &m_elapsedTime, 0.01);
+        ImGui::Checkbox("Pause", &m_pause); 
+        ImGui::SeparatorText("Noise parameters");
+        ImGui::SliderInt("Octaves", &m_octaves, 1.0, 8);
+        ImGui::DragFloat("Amplitude", &m_amplitude, 0.001);     
+        ImGui::DragFloat("Frequency", &m_frequency, 0.001);   
+        ImGui::DragFloat("Lacunarity", &m_lacunarity, 0.001, 1);      
+        ImGui::DragFloat("Persistence", &m_persistence, 0.001, 0, 1);
+        ImGui::PopItemWidth();
     ImGui::End();
 
     ImGui::Begin("Render");

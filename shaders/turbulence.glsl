@@ -3,6 +3,7 @@
 
 out vec4 oColor;
 
+uniform vec2  uPos;
 uniform float uTime;
 uniform vec2  uResolution;
 
@@ -90,7 +91,7 @@ void main()
     float frequency = uFrequency;
     for (int i = 0; i < uOctaves; i++)
     {
-        y += amplitude * noise3(vec3(uv * uSize * frequency, uTime));
+        y += amplitude * abs(noise3(vec3((uv + uPos) * uSize * frequency, uTime)));
         amplitude *= uPersistence;
         frequency *= uLacunarity;
     }
