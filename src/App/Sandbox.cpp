@@ -11,10 +11,15 @@ Sandbox::Sandbox()
 {
     m_fps = 0;
     m_fpsCounter = 0;   
+
+    //Instance default shader and configure it
     m_main = Shader("../shaders/vert.glsl", "../shaders/frag.glsl");
     glUseProgram(m_main.id);
+    glm::vec2 resolution(Settings::fbSize.x, Settings::fbSize.y);
+    m_main.setVec2("uResolution", resolution);
+
     
-    
+    //Create framebuffer
     glGenFramebuffers(1, &m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
@@ -31,6 +36,7 @@ Sandbox::Sandbox()
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, Settings::width, Settings::height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
     
+    m_planeShader = Rectangle(glm::vec3(0, 0, 0), glm::vec2(2, 2));
 }
 
 void Sandbox::update()
@@ -38,7 +44,7 @@ void Sandbox::update()
     this->countFPS();
     float dt = m_delta.getDeltaTime();
     m_main.setFloat("uTime", m_elapsed.getElapsedTime());
-
+    m_main.setVec3("uPos", m_planeShader.position);
 
 }
 
@@ -51,7 +57,7 @@ void Sandbox::handleGui()
 
     ImGui::DockSpaceOverViewport();
     ImGui::Begin("Shader");
-    
+        //ImGui::SetNextItemWidth(150);
     ImGui::End();
 
     ImGui::Begin("Render");
@@ -68,8 +74,7 @@ void Sandbox::draw()
 {  
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
-    //Start draw triangle
+    m_planeShader.draw();
 }
 
 void Sandbox::countFPS()

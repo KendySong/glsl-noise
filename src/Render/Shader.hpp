@@ -9,6 +9,7 @@ public:
 	Shader(const char* vertexPath, const char* fragmentPath);
 
 	void setMat4x4(const char* name, const glm::mat4x4& matrix);
+	void setVec2(const char* name, const glm::vec2& vec);
 	void setVec3(const char* name, const glm::vec3& vec);
 	void setFloat(const char* name, float value);
 	void setBool(const char* name, bool value);
