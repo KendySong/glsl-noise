@@ -12,6 +12,7 @@ public:
 	void setVec2(const char* name, const glm::vec2& vec);
 	void setVec3(const char* name, const glm::vec3& vec);
 	void setFloat(const char* name, float value);
+	void setInt(const char* name, int value);
 	void setBool(const char* name, bool value);
 	std::uint32_t id;
 

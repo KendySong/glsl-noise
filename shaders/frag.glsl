@@ -6,6 +6,13 @@ out vec4 oColor;
 uniform float uTime;
 uniform vec2  uResolution;
 
+uniform int   uOctaves;
+uniform vec2  uSize;
+uniform float uAmplitude;
+uniform float uFrequency;
+uniform float uLacunarity;
+uniform float uPersistence;
+
 float random(vec2 pos)
 {
     vec2 s0 = vec2(82437.25346, 34657.95678);
@@ -77,8 +84,16 @@ float noise3(vec3 p)
 void main()
 {
     vec2 uv = gl_FragCoord.xy / uResolution.xy;
-    float noise = (noise3(vec3(uv * vec2(16, 9), uTime)) + 1.0) / 2.0;
 
+    float y = 0;
+    float amplitude = uAmplitude;
+    float frequency = uFrequency;
+    for (int i = 0; i < uOctaves; i++)
+    {
+        y += amplitude * noise3(vec3(uv * uSize * frequency, uTime));
+        amplitude *= uPersistence;
+        frequency *= uLacunarity;
+    }
 
-    oColor = vec4(vec3(noise), 1.0);
+    oColor = vec4(vec3(y * 0.5 + 0.5), 1.0);
 } 

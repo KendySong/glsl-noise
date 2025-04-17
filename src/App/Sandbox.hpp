@@ -26,7 +26,13 @@ private :
 	std::uint32_t m_fbo;
 	std::uint32_t m_fbto;
 	std::uint32_t m_rbo;
-
-	//Rectangle
 	Rectangle m_planeShader;
+
+	//Noise settings
+	glm::vec2 m_size;
+	std::int32_t m_octaves;
+	float m_amplitude;
+	float m_frequency;
+	float m_persistence;
+	float m_lacunarity;	
 };

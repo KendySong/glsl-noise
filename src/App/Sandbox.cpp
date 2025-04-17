@@ -10,7 +10,13 @@
 Sandbox::Sandbox()
 {
     m_fps = 0;
-    m_fpsCounter = 0;   
+    m_fpsCounter = 0;  
+    m_size = glm::vec2(16, 9);
+    m_octaves = 2;
+    m_amplitude = 1.0;
+    m_frequency = 1.0;
+    m_persistence = 0.5;
+    m_lacunarity = 2.0;
 
     //Instance default shader and configure it
     m_main = Shader("../shaders/vert.glsl", "../shaders/frag.glsl");
@@ -18,7 +24,6 @@ Sandbox::Sandbox()
     glm::vec2 resolution(Settings::fbSize.x, Settings::fbSize.y);
     m_main.setVec2("uResolution", resolution);
 
-    
     //Create framebuffer
     glGenFramebuffers(1, &m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
@@ -46,6 +51,12 @@ void Sandbox::update()
     m_main.setFloat("uTime", m_elapsed.getElapsedTime());
     m_main.setVec3("uPos", m_planeShader.position);
 
+    m_main.setInt("uOctaves", m_octaves);
+    m_main.setVec2("uSize", m_size);
+    m_main.setFloat("uAmplitude", m_amplitude);
+    m_main.setFloat("uFrequency", m_frequency);
+    m_main.setFloat("uLacunarity", m_lacunarity);
+    m_main.setFloat("uPersistence", m_persistence);
 }
 
 void Sandbox::handleGui()
@@ -57,7 +68,18 @@ void Sandbox::handleGui()
 
     ImGui::DockSpaceOverViewport();
     ImGui::Begin("Shader");
-        //ImGui::SetNextItemWidth(150);
+        ImGui::SetNextItemWidth(200);
+        ImGui::DragFloat2("Map Size", &m_size.x, 0.5);
+        ImGui::SetNextItemWidth(200);
+        ImGui::DragInt("Octaves", &m_octaves, 1.0, 1);
+        ImGui::SetNextItemWidth(200);
+        ImGui::DragFloat("Amplitude", &m_amplitude, 0.05);
+        ImGui::SetNextItemWidth(200);
+        ImGui::DragFloat("Frequency", &m_frequency, 0.05);
+        ImGui::SetNextItemWidth(200);
+        ImGui::DragFloat("Lacunarity", &m_lacunarity, 0.05);
+        ImGui::SetNextItemWidth(200);
+        ImGui::DragFloat("Persistence", &m_persistence, 0.05);
     ImGui::End();
 
     ImGui::Begin("Render");
