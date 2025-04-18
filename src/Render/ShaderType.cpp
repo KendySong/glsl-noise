@@ -11,6 +11,14 @@ std::string getString(ShaderType type)
     case ShaderType::Turbulence :
         return "Turbulence";    
         break;
+
+    case ShaderType::TurbulenceRidget:
+        return "Turbulence Ridget";
+        break;
+
+    case ShaderType::Value:
+        return "Value";
+        break;  
     }
     return "Default";
 }

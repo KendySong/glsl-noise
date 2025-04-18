@@ -26,7 +26,9 @@ Sandbox::Sandbox()
     //Instance default shader and configure it
     m_shaders["Gradient"] = Shader("../shaders/vertex.glsl", "../shaders/gradient.glsl");
     m_shaders["Turbulence"] = Shader("../shaders/vertex.glsl", "../shaders/turbulence.glsl");
-
+    m_shaders["Turbulence Ridget"] = Shader("../shaders/vertex.glsl", "../shaders/turbulence-ridget.glsl");
+    m_shaders["Value"] = Shader("../shaders/vertex.glsl", "../shaders/value.glsl");
+    
     glUseProgram(m_shaders[getString(m_current)].id);
     m_resolution = glm::vec2(Settings::fbSize.x, Settings::fbSize.y);
     m_pos = glm::vec2(0);
