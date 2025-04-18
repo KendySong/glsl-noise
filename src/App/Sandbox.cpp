@@ -6,7 +6,7 @@
 
 #include "Sandbox.hpp"
 #include "../Settings.hpp"
-#include <iostream>
+#include "../Log.hpp"
 
 Sandbox::Sandbox()
 {
@@ -19,6 +19,7 @@ Sandbox::Sandbox()
     m_persistence = 0.5;
     m_lacunarity = 2.0;
 
+    m_autoScroll = true;
     m_pause = false;
     m_elapsedTime = 0;
     m_current = ShaderType::Gradient;
@@ -50,7 +51,14 @@ Sandbox::Sandbox()
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, Settings::width, Settings::height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
     
-    m_planeShader = Rectangle(glm::vec3(0, 0, 0), glm::vec2(2, 2));
+    m_planeShader = gln::Rectangle(glm::vec3(0, 0, 0), glm::vec2(2, 2));
+
+    //Get GPU
+    const GLubyte* gpuName = glGetString(GL_RENDERER);
+    for (size_t i = 0; i < strlen((char*)gpuName); i++)
+    {
+        m_gpu += gpuName[i];
+    }
 }
 
 void Sandbox::update()
@@ -77,7 +85,7 @@ void Sandbox::handleGui()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     ImGui::BeginMainMenuBar();
-        ImGui::Text("FPS : %i", m_fps);
+        ImGui::Text("FPS : %i | GPU : %s", m_fps, m_gpu.c_str());
     ImGui::EndMainMenuBar();
 
     ImGui::DockSpaceOverViewport();
@@ -123,6 +131,24 @@ void Sandbox::handleGui()
             cursorPos,
             ImVec2(cursorPos.x + Settings::fbSize.x, cursorPos.y + Settings::fbSize.y)
         );
+    ImGui::End();
+
+    ImGui::Begin("Console");
+        if (ImGui::Button("Clear"))
+        {
+            Log::instance()->logs = "";
+        }
+        ImGui::SameLine();
+        ImGui::Checkbox("Scroll to bottom", &m_autoScroll);
+        ImGui::Separator();
+
+        ImGui::BeginChild("child");
+            if (m_autoScroll)
+            {
+                ImGui::SetScrollY(ImGui::GetTextLineHeight() * Log::instance()->line);
+            }
+            ImGui::TextUnformatted(Log::instance()->logs.c_str());
+        ImGui::EndChild();
     ImGui::End();
 }
 

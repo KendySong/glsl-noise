@@ -24,12 +24,14 @@ private :
 
 	Timer m_elapsed;
 	Timer m_delta;
+	bool m_autoScroll;
+	std::string m_gpu;
 	
 	//Framebuffer
 	std::uint32_t m_fbo;
 	std::uint32_t m_fbto;
 	std::uint32_t m_rbo;
-	Rectangle m_planeShader;
+	gln::Rectangle m_planeShader;
 
 	//Shaders
 	bool m_pause;

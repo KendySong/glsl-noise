@@ -6,15 +6,15 @@
 
 class Log
 {
+public:
+	static Log* instance() noexcept;
+	void log(std::string log, int color = 15);
+	std::string logs;
+	int line;
+
 private:
 	Log();
 
-public:
-	static Log* instance() noexcept;
-
-	void log(std::string log, int color = 15);
-
-private:
 	static Log* s_log;
 	HANDLE m_hConsole;
 	std::ofstream m_logStream;

@@ -4,7 +4,7 @@
 #include "Rectangle.hpp"
 
 
-Rectangle::Rectangle(glm::vec3 position, glm::vec2 size) : position(position), size(size)
+gln::Rectangle::Rectangle(glm::vec3 position, glm::vec2 size) : position(position), size(size)
 {
 	glm::vec2 halfSize = size / 2.0f;
 	Vertex vertices[] = {
@@ -31,7 +31,7 @@ Rectangle::Rectangle(glm::vec3 position, glm::vec2 size) : position(position), s
 	Vertex::bind();
 }
 
-void Rectangle::draw()
+void gln::Rectangle::draw()
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

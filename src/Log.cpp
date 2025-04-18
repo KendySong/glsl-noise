@@ -5,10 +5,13 @@ Log* Log::s_log = nullptr;
 
 Log::Log()
 {
+	line = 0;
 	m_logStream = std::ofstream("log.txt", std::ios::app);
 	if (!m_logStream.is_open())
 	{
 		std::cout << "[ERROR] log.txt cannot be open";
+		logs += "[ERROR] log.txt cannot be open\n";
+		line++;
 	}
 
 	m_hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -29,5 +32,7 @@ void Log::log(std::string log, int color)
 	std::cout << log;
 	SetConsoleTextAttribute(m_hConsole, 15);
 
+	logs += log;
+	line++;
 	m_logStream << log;
 }
