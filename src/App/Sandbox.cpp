@@ -23,7 +23,7 @@ Sandbox::Sandbox()
     m_autoScroll = true;
     m_pause = false;
     m_elapsedTime = 0;
-    m_current = ShaderType::Gradient;
+    m_current = ShaderType::Cellular;
 
     //Instance default shader and configure it
     m_shaders["Gradient"] = Shader("../shaders/vertex.glsl", "../shaders/gradient.glsl");
