@@ -16,6 +16,10 @@ std::string getString(ShaderType type)
         return "Turbulence Ridget";
         break;
 
+    case ShaderType::Cellular:
+        return "Cellular";
+        break;
+
     case ShaderType::Value:
         return "Value";
         break;  

@@ -7,6 +7,7 @@
 #include "Sandbox.hpp"
 #include "../Settings.hpp"
 #include "../Log.hpp"
+#include <iostream>
 
 Sandbox::Sandbox()
 {
@@ -28,6 +29,7 @@ Sandbox::Sandbox()
     m_shaders["Gradient"] = Shader("../shaders/vertex.glsl", "../shaders/gradient.glsl");
     m_shaders["Turbulence"] = Shader("../shaders/vertex.glsl", "../shaders/turbulence.glsl");
     m_shaders["Turbulence Ridget"] = Shader("../shaders/vertex.glsl", "../shaders/turbulence-ridget.glsl");
+    m_shaders["Cellular"] = Shader("../shaders/vertex.glsl", "../shaders/cellular.glsl");
     m_shaders["Value"] = Shader("../shaders/vertex.glsl", "../shaders/value.glsl");
     
     glUseProgram(m_shaders[getString(m_current)].id);
@@ -78,7 +80,7 @@ void Sandbox::update()
     m_shaders[getString(m_current)].setFloat("uAmplitude", m_amplitude);
     m_shaders[getString(m_current)].setFloat("uFrequency", m_frequency);
     m_shaders[getString(m_current)].setFloat("uLacunarity", m_lacunarity);
-    m_shaders[getString(m_current)].setFloat("uPersistence", m_persistence);
+    m_shaders[getString(m_current)].setFloat("uPersistence", m_persistence);    
 }
 
 void Sandbox::handleGui()
